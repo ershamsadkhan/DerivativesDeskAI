@@ -12,6 +12,7 @@ obj/
 .env
 .env.local
 *.env
+appsettings.Development.json
 
 # Rider / VS / VSCode
 .idea/
