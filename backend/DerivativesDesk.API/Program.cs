@@ -5,12 +5,12 @@ using DerivativesDesk.Infrastructure.Dapper;
 using DerivativesDesk.Infrastructure.Dapper.Repositories;
 using DerivativesDesk.Infrastructure.Redis;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Embeddings;
-
-var builder = WebApplication.CreateBuilder(args);
 
 // Load environment variables from .env if present (dev convenience)
+// Must run BEFORE CreateBuilder so the env vars are visible to ConfigurationManager
 DotNetEnv.Env.TraversePath().Load();
+
+var builder = WebApplication.CreateBuilder(args);
 
 // ── Controllers + Swagger ───────────────────────────────────────────────────
 builder.Services.AddControllers();
@@ -44,9 +44,6 @@ var embeddingModel = builder.Configuration["OPENAI_EMBEDDING_MODEL"] ?? "text-em
 builder.Services.AddKernel()
     .AddOpenAITextEmbeddingGeneration(embeddingModel, openAiKey);
 
-builder.Services.AddSingleton<ITextEmbeddingGenerationService>(sp =>
-    sp.GetRequiredService<Kernel>().GetRequiredService<ITextEmbeddingGenerationService>());
-
 // ── Anthropic SDK (Claude chat) ─────────────────────────────────────────────
 var anthropicKey = builder.Configuration["ANTHROPIC_API_KEY"]!;
 builder.Services.AddSingleton(new AnthropicClient(new Anthropic.Core.ClientOptions { ApiKey = anthropicKey }));
@@ -63,11 +60,19 @@ app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Derivatives
 app.UseCors("FrontendPolicy");
 app.MapControllers();
 
-// Ensure Redis index exists on startup
+// Ensure Redis index exists on startup (non-fatal — app runs even if Redis is unavailable)
 using (var scope = app.Services.CreateScope())
 {
     var vectorStore = scope.ServiceProvider.GetRequiredService<IVectorStoreService>();
-    await vectorStore.EnsureIndexAsync();
+    try
+    {
+        await vectorStore.EnsureIndexAsync();
+    }
+    catch (Exception ex)
+    {
+        var startupLogger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        startupLogger.LogWarning(ex, "Redis index creation failed on startup — vector search will be unavailable until Redis is reachable.");
+    }
 }
 
 app.Run();

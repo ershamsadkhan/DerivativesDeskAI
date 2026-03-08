@@ -9,7 +9,6 @@ public class ChatController(IChatService chatService, ILogger<ChatController> lo
 {
     /// <summary>Stream a chat response via Server-Sent Events.</summary>
     [HttpPost("stream")]
-    [Produces("text/event-stream")]
     public async Task StreamAsync([FromBody] ChatRequest request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Message))
@@ -18,10 +17,17 @@ public class ChatController(IChatService chatService, ILogger<ChatController> lo
             return;
         }
 
+        // Disable Kestrel/middleware buffering so each WriteAsync goes out immediately
+        var bufferingFeature = HttpContext.Features.Get<Microsoft.AspNetCore.Http.Features.IHttpResponseBodyFeature>();
+        bufferingFeature?.DisableBuffering();
+
         Response.Headers.ContentType = "text/event-stream";
         Response.Headers.CacheControl = "no-cache";
         Response.Headers.Connection = "keep-alive";
         Response.Headers["X-Accel-Buffering"] = "no";
+
+        // Flush headers immediately so the browser gets a 200 and doesn't stay in "pending"
+        await Response.StartAsync(cancellationToken);
 
         logger.LogInformation("Chat stream started for session {SessionId}", request.SessionId);
 
@@ -41,7 +47,18 @@ public class ChatController(IChatService chatService, ILogger<ChatController> lo
         {
             logger.LogInformation("Chat stream cancelled for session {SessionId}", request.SessionId);
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Chat stream error for session {SessionId}", request.SessionId);
+            var errData = System.Text.Json.JsonSerializer.Serialize(new { error = ex.Message });
+            await Response.WriteAsync($"data: {errData}\n\n", cancellationToken);
+            await Response.Body.FlushAsync(cancellationToken);
+        }
     }
+
+    /// <summary>Health check — returns 200 if the API is running.</summary>
+    [HttpGet("ping")]
+    public IActionResult Ping() => Ok(new { status = "ok", utc = DateTime.UtcNow });
 
     /// <summary>Get chat history for a session.</summary>
     [HttpGet("history/{sessionId}")]

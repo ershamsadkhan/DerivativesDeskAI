@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:7083';
+// Requests are proxied to the backend via vite.config.ts — no cross-origin issues
+const API_BASE = '';
 
 export async function* streamChat(
   sessionId: string,
@@ -38,8 +39,10 @@ export async function* streamChat(
         try {
           const parsed = JSON.parse(data);
           if (parsed.token) yield parsed.token as string;
-        } catch {
-          // ignore malformed lines
+          if (parsed.error) throw new Error(`Server error: ${parsed.error}`);
+        } catch (e) {
+          if (e instanceof Error && e.message.startsWith('Server error:')) throw e;
+          // ignore other malformed lines
         }
       }
     }
