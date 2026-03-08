@@ -16,6 +16,7 @@ obj/
 # Rider / VS / VSCode
 .idea/
 .vscode/
+.vs/
 *.suo
 *.ntvs*
 *.njsproj
