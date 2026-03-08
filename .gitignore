@@ -1,0 +1,33 @@
+# .NET build output
+bin/
+obj/
+
+# .NET user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Environment / secrets
+.env
+.env.local
+*.env
+
+# Rider / VS / VSCode
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+
+# Logs
+*.log
+logs/
+
+*.vsidx

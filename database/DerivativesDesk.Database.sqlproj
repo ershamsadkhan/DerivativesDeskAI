@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>DerivativesDesk.Database</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql150DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>DerivativesDesk.Database</RootNamespace>
+    <AssemblyName>DerivativesDesk.Database</AssemblyName>
+    <ModelCollation>SQL_Latin1_General_CP1_CI_AS</ModelCollation>
+    <DefaultFileStructure>BySchemaAndType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <Deterministic>True</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <Deterministic>True</Deterministic>
+  </PropertyGroup>
+  <ItemGroup>
+    <Build Include="Tables\PortfolioManagers.sql" />
+    <Build Include="Tables\FuturesContracts.sql" />
+    <Build Include="Tables\RolloverPeriods.sql" />
+    <Build Include="Tables\Orders.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Scripts\TestData\001_PortfolioManagers.sql" />
+    <None Include="Scripts\TestData\002_FuturesContracts.sql" />
+    <None Include="Scripts\TestData\003_RolloverPeriods.sql" />
+    <None Include="Scripts\TestData\004_Orders.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" Condition="'$(VisualStudioVersion)' != '' And Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v16.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" Condition="'$(VisualStudioVersion)' == '' And Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v16.0\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')" />
+</Project>

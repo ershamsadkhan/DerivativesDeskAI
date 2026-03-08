@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-DerivativesDesk.ETL-b31bac2b-eae6-4661-8add-975508d65880</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Anthropic" Version="12.8.0" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.73.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.73.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DerivativesDesk.Core\DerivativesDesk.Core.csproj" />
+    <ProjectReference Include="..\DerivativesDesk.Infrastructure\DerivativesDesk.Infrastructure.csproj" />
+    <ProjectReference Include="..\DerivativesDesk.AI\DerivativesDesk.AI.csproj" />
+  </ItemGroup>
+</Project>
